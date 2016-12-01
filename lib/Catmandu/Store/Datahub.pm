@@ -4,15 +4,16 @@ use Catmandu::Sane;
 
 use Moo;
 use Lido::XML;
+use LWP::UserAgent;
 use Catmandu::Store::Datahub::Bag;
+use Catmandu::Store::Datahub::OAuth;
 
 use REST::Client;
 
 with 'Catmandu::Store';
 
-has url      => (is => 'ro', required => 1);
-has username => (is => 'ro', required => 1);
-has password => (is => 'ro', required => 1);
+has url        => (is => 'ro', required => 1);
+has oauth_code => (is => 'ro', required => 1);
 
 has lido     => (is => 'lazy');
 has client   => (is => 'lazy');
@@ -27,11 +28,11 @@ sub _build_lido {
 
 sub _build_client {
     my $self = shift;
-    my $client = REST::Client->new();
+    #my $oath = Catmandu::Store::Datahub::OAuth->new(code => $self->oauth_code);
+    #my $client = $oauth->client;
+    my $client = LWP::UserAgent->new();
     return $client;
 }
-
-
 
 
 1;
