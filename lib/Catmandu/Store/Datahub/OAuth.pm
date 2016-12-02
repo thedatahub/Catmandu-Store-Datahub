@@ -1,26 +1,42 @@
 package Catmandu::Store::Datahub::OAuth;
 
-use LWP::Authen::OAuth2;
+use LWP::UserAgent;
+use JSON;
+use Moo;
 
-sub new {
-    my $class = shift;
-    my ($code) = @_;
-    my $self = {
-        'oauth' => LWP::Authen::OAuth2->new(
-                    client_id => "",
-                    client_secret => "",
-                    service_provider => "",
-                    redirect_uri => "",
-                    save_tokens => \&save_tokens,
-                    save_token_args => [$dbh],
-                    token_string => $token_string
-                )
-    };
-    $self->{'oauth'}->request_tokens(code => $code);
-    my $token_string = $self->{'oauth'}->token_string;
-    $self->{'client'} = $self->{'oauth'};
-    bless $self, $class;
-    return $self;
+has username => (is => 'ro', required => 1);
+has password => (is => 'ro', required => 1);
+
+has client_id     => (is => 'ro', required => 1);
+has client_secret => (is => 'ro', required => 1);
+
+has ua => (is => 'lazy');
+
+
+sub _build_ua {
+    my $self = shift;
+    return LWP::UserAgent->new();
+}
+
+sub token {
+    my $self = shift;
+    # Replace this with something better as soon as we figure out how we can get rid of the password
+    return $self->get_token_u_p();
+}
+
+sub get_token_u_p {
+    my ($self) = @_;
+    my $auth_url = 'http://datahub.app/oauth/v2/token?grant_type=password&username=%s&password=%s&client_id=%s&client_secret=%s';
+    my $response = $self->ua->get(sprintf($auth_url, $self->username, $self->password, $self->client_id, $self->client_secret));
+    if ($response->is_success) {
+        my $token_raw = $response->decoded_content;
+        my $token_parsed = decode_json($token_raw);
+        return $token_parsed->{'access_token'};
+    } else {
+        print($response->status_line."\n");
+        print($response->decoded_content."\n");
+        return undef;
+    }
 }
 
 

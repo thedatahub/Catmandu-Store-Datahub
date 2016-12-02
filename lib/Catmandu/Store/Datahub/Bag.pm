@@ -2,6 +2,7 @@ package Catmandu::Store::Datahub::Bag;
 
 use Moo;
 use Scalar::Util qw(reftype);
+use LWP::UserAgent;
 use Catmandu::Bag::IdGenerator::Datahub;
 use Catmandu::Util qw(is_string require_package);
 
@@ -58,11 +59,12 @@ sub get {
     my ($self, $id) = @_;
     my $url = sprintf('%s/%s', $self->store->url, $id);
     
-    my $response = $self->store->client->get($url);
+    my $token = $self->store->access_token;
+    my $response = $self->store->client->get($url, Authorization => sprintf('Bearer %s', $token));
     if ($response->is_success) {
         return $response->decoded_content;
     } else {
-        print($response->status_line);
+        print($response->status_line."\n");
         return undef;
     }
 }
@@ -75,11 +77,12 @@ sub add {
 
     my $lido_data = $self->store->lido->to_xml($data);
     
-    my $response = $self->store->client->post($url, Content_Type => 'application/xml', Content => $lido_data);
+    my $token = $self->store->access_token;
+    my $response = $self->store->client->post($url, Content_Type => 'application/lido+xml', Authorization => sprintf('Bearer %s', $token), Content => $lido_data);
     if ($response->is_success) {
         return $response->decoded_content;
     } else {
-        print($response->status_line);
+        print($response->status_line."\n");
         return undef;
     }
 }
@@ -92,11 +95,12 @@ sub update {
 
     my $lido_data = $self->store->lido->to_xml($data);
     
-    my $response = $self->store->client->put($url, Content_Type => 'application/xml', Content => $lido_data);
+    my $token = $self->store->access_token;
+    my $response = $self->store->client->put($url, Content_Type => 'application/lido+xml', Authorization => sprintf('Bearer %s', $token), Content => $lido_data);
     if ($response->is_success) {
         return $response->decoded_content;
     } else {
-        print($response->status_line);
+        print($response->status_line."\n");
         return undef;
     }
 }
@@ -107,11 +111,12 @@ sub delete {
     my ($self, $id) = @_;
     my $url = sprintf('%s/%s', $self->store->url, $id);
     
-    my $response = $self->store->client->delete($url);
+    my $token = $self->store->access_token;
+    my $response = $self->store->client->delete($url, Authorization => sprintf('Bearer %s', $token));
     if ($response->is_success) {
         return $response->decoded_content;
     } else {
-        print($response->status_line);
+        print($response->status_line."\n");
         return undef;
     }
 }
