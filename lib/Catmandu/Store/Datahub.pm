@@ -8,7 +8,6 @@ use Catmandu::Store::Datahub::Bag;
 use Catmandu::Store::Datahub::OAuth;
 use LWP::UserAgent;
 
-use REST::Client;
 
 with 'Catmandu::Store';
 
