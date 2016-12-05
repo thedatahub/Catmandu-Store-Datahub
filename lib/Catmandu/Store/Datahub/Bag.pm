@@ -4,7 +4,10 @@ use Moo;
 use Scalar::Util qw(reftype);
 use LWP::UserAgent;
 use Catmandu::Bag::IdGenerator::Datahub;
+use Catmandu::Store::Datahub::Generator;
 use Catmandu::Util qw(is_string require_package);
+use Time::HiRes qw(usleep);
+use Catmandu::Sane;
 
 use Data::Dumper qw(Dumper);
 
@@ -50,21 +53,38 @@ around update => sub {
 
 sub generator {
     my ($self) = @_;
-    # implementation-dependent
+    return sub {
+        state $gen = do {
+            my $g = Catmandu::Store::Datahub::Generator->new(token => $self->store->access_token, url => $self->store->url);
+            $g->set_list();
+            return $g;
+        };
+        return $gen->next;
+    };
 }
+
 
 ##
 # Return a record identified by $id
 sub get {
     my ($self, $id) = @_;
-    my $url = sprintf('%s/%s', $self->store->url, $id);
+    my $url = sprintf('%s/api/v1/data/%s', $self->store->url, $id);
     
     my $token = $self->store->access_token;
     my $response = $self->store->client->get($url, Authorization => sprintf('Bearer %s', $token));
     if ($response->is_success) {
         return $response->decoded_content;
     } else {
-        print($response->status_line."\n");
+        Catmandu::HTTPError->throw({
+                code             => $response->code,
+                message          => $response->status_line,
+                url              => $response->request->uri,
+                method           => $response->request->method,
+                request_headers  => [],
+                request_body     => $response->request->decoded_content,
+                response_headers => [],
+                response_body    => $response->decoded_content,
+            });
         return undef;
     }
 }
@@ -73,7 +93,7 @@ sub get {
 # Create a new record
 sub add {
     my ($self, $data) = @_;
-    my $url = sprintf('%s', $self->store->url);
+    my $url = sprintf('%s/api/v1/data.lidoxml', $self->store->url);
 
     my $lido_data = $self->store->lido->to_xml($data);
     
@@ -82,7 +102,16 @@ sub add {
     if ($response->is_success) {
         return $response->decoded_content;
     } else {
-        print($response->status_line."\n");
+        Catmandu::HTTPError->throw({
+                code             => $response->code,
+                message          => $response->status_line,
+                url              => $response->request->uri,
+                method           => $response->request->method,
+                request_headers  => [],
+                request_body     => $response->request->decoded_content,
+                response_headers => [],
+                response_body    => $response->decoded_content,
+            });
         return undef;
     }
 }
@@ -91,7 +120,7 @@ sub add {
 # Update a record
 sub update {
     my ($self, $id, $data) = @_;
-    my $url = sprintf('%s/%s', $self->store->url, $id);
+    my $url = sprintf('%s/api/v1/data.lidoxml/%s', $self->store->url, $id);
 
     my $lido_data = $self->store->lido->to_xml($data);
     
@@ -100,7 +129,16 @@ sub update {
     if ($response->is_success) {
         return $response->decoded_content;
     } else {
-        print($response->status_line."\n");
+        Catmandu::HTTPError->throw({
+                code             => $response->code,
+                message          => $response->status_line,
+                url              => $response->request->uri,
+                method           => $response->request->method,
+                request_headers  => [],
+                request_body     => $response->request->decoded_content,
+                response_headers => [],
+                response_body    => $response->decoded_content,
+            });
         return undef;
     }
 }
@@ -109,14 +147,23 @@ sub update {
 # Delete a record
 sub delete {
     my ($self, $id) = @_;
-    my $url = sprintf('%s/%s', $self->store->url, $id);
+    my $url = sprintf('%s/api/v1/data/%s', $self->store->url, $id);
     
     my $token = $self->store->access_token;
     my $response = $self->store->client->delete($url, Authorization => sprintf('Bearer %s', $token));
     if ($response->is_success) {
         return $response->decoded_content;
     } else {
-        print($response->status_line."\n");
+        Catmandu::HTTPError->throw({
+                code             => $response->code,
+                message          => $response->status_line,
+                url              => $response->request->uri,
+                method           => $response->request->method,
+                request_headers  => [],
+                request_body     => $response->request->decoded_content,
+                response_headers => [],
+                response_body    => $response->decoded_content,
+            });
         return undef;
     }
 }
