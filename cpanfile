@@ -1,7 +1,9 @@
-requires 'perl', '5.008005';
-
-# requires 'Some::Module', 'VERSION';
-
 on test => sub {
-    requires 'Test::More', '0.96';
+  requires 'Test::Deep', '0.112';
+  requires 'Test::Exception', '0.43';
+  requires 'Test::More', '0.99';
+  requires 'Test::Pod', 0;
 };
+
+requires 'Catmandu', '>=1.0304';
+requires 'URL::Encode', '>=0.03';

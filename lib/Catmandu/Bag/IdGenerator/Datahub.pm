@@ -1,5 +1,7 @@
 package Catmandu::Bag::IdGenerator::Datahub;
 
+our $VERSION = '0.01';
+
 use Catmandu::Sane;
 use URL::Encode qw(url_encode_utf8 url_decode_utf8);
 use Moo;
