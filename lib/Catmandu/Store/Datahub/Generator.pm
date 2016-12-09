@@ -66,7 +66,7 @@ sub get_single {
 
 sub next {
     my ($self) = @_;
-    my $next = shift @$self->list;
+    my $next = shift @{$self->list};
     return $self->get_single($next->['data_pids'][0]);
 }
 
