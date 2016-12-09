@@ -7,3 +7,4 @@ on test => sub {
 
 requires 'Catmandu', '>=1.0304';
 requires 'URL::Encode', '>=0.03';
+requires 'Lido::XML', '>=0.07';
