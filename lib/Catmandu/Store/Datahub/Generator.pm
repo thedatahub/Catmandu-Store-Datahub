@@ -45,7 +45,7 @@ sub set_list {
 
 sub get_single {
     my ($self, $id) = @_;
-    my $url = sprintf('%s/api/v1/data.lidoxml/%s', $self->url, $id);
+    my $url = sprintf('%s/api/v1/data/%s', $self->url, $id);
     my $response = $self->ua->get($url, Authorization => sprintf('Bearer %s', $self->token));
     if ($response->is_success) {
         return $response->decoded_content;
