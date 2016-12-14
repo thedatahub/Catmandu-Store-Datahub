@@ -4,7 +4,6 @@ use Moo;
 use Scalar::Util qw(reftype);
 use LWP::UserAgent;
 use Catmandu::Bag::IdGenerator::Datahub;
-use Catmandu::Store::Datahub::Generator;
 use Catmandu::Util qw(is_string require_package);
 use Time::HiRes qw(usleep);
 use Catmandu::Sane;
@@ -51,17 +50,8 @@ around update => sub {
     return $self->$orig($id, $data);
 };
 
-
 sub generator {
-    my ($self) = @_;
-    return sub {
-        state $gen = do {
-            my $g = Catmandu::Store::Datahub::Generator->new(token => $self->store->access_token, url => $self->store->url);
-            $g->set_list();
-            return $g;
-        };
-        return $gen->next;
-    };
+    my $self = shift;
 }
 
 

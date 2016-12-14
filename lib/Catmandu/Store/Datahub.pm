@@ -67,11 +67,19 @@ Note that you must convert your data to LIDO in order to use this module. All ot
 
 To configure the store, the location of the Datahub is required. As OAuth2 is used, a client id and secret are also required, as well as a username and a password.
 
-* `url`: base url of the Datahub (e.g. _http://www.datahub.be_).
-* `client_id`: OAuth2 client ID.
-* `client_secret`: OAuth2 client secret.
-* `username`: Datahub username.
-* `password`: Datahub password.
+=over
+
+=item C<url>: base url of the Datahub (e.g. _http://www.datahub.be_).
+
+=item C<client_id>: OAuth2 client ID.
+
+=item C<client_secret>: OAuth2 client secret.
+
+=item C<username>: Datahub username.
+
+=item C<password>: Datahub password.
+
+=back
 
 =head1 USAGE
 
@@ -83,17 +91,27 @@ L<Catmandu::LIDO> and L<Catmandu>
 
 =head1 AUTHORS
 
-Pieter De Praetere, C<< pieter at packed.be >>
-Matthias Vandermaesen, C<< matthias.vandermaesen at vlaamsekunstcollectie.be >>
+=over
+
+=item Pieter De Praetere, C<< pieter at packed.be >>
+
+=item Matthias Vandermaesen, C<< matthias.vandermaesen at vlaamsekunstcollectie.be >>
+
+=back
 
 =head1 CONTRIBUTORS
 
-Pieter De Praetere
-Matthias Vandermaesen
+=over
+
+=item Pieter De Praetere, C<< pieter at packed.be >>
+
+=item Matthias Vandermaesen, C<< matthias.vandermaesen at vlaamsekunstcollectie.be >>
+
+=back
 
 =head1 COPYRIGHT AND LICENSE
 
-The Perl software is copyright (c) 2016 by Pieter De Praetere.
+The Perl software is copyright (c) 2016 by PACKED vzw and VKC vzw.
 
 This is free software; you can redistribute it and/or modify it under the same terms as the Perl 5 programming language system itself.
 

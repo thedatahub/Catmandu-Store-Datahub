@@ -12,7 +12,7 @@ has data_pid => (is => 'ro');
 
 sub generate {
     my ($self) = @_;
-    my $data_pid = url_encode_utf8($self->data_pid);
+    my $data_pid = $self->data_pid;
     return $data_pid;
 }
 
