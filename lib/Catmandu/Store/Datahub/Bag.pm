@@ -8,6 +8,7 @@ use Catmandu::Store::Datahub::Generator;
 use Catmandu::Util qw(is_string require_package);
 use Time::HiRes qw(usleep);
 use Catmandu::Sane;
+use JSON;
 
 use Data::Dumper qw(Dumper);
 
@@ -73,7 +74,7 @@ sub get {
     my $token = $self->store->access_token;
     my $response = $self->store->client->get($url, Authorization => sprintf('Bearer %s', $token));
     if ($response->is_success) {
-        return $response->decoded_content;
+        return decode_json($response->decoded_content);
     } else {
         Catmandu::HTTPError->throw({
                 code             => $response->code,
@@ -93,12 +94,21 @@ sub get {
 # Create a new record
 sub add {
     my ($self, $data) = @_;
-    my $url = sprintf('%s/api/v1/data.lidoxml', $self->store->url);
+    my $url;
 
     my $lido_data = $self->store->lido->to_xml($data);
     
     my $token = $self->store->access_token;
-    my $response = $self->store->client->post($url, Content_Type => 'application/lido+xml', Authorization => sprintf('Bearer %s', $token), Content => $lido_data);
+    my $response;
+
+    if ($self->in_datahub($data->{'lidoRecID'}->[0]->{'_'})) {
+        my $id = $data->{'lidoRecID'}->[0]->{'_'};
+        $url = sprintf('%s/api/v1/data/%s', $self->store->url, $id);
+        $response = $self->store->client->put($url, Content_Type => 'application/lido+xml', Authorization => sprintf('Bearer %s', $token), Content => $lido_data);
+    } else {
+        $url = sprintf('%s/api/v1/data.lidoxml', $self->store->url);
+        $response = $self->store->client->post($url, Content_Type => 'application/lido+xml', Authorization => sprintf('Bearer %s', $token), Content => $lido_data);
+    }
     if ($response->is_success) {
         return $response->decoded_content;
     } else {
@@ -120,7 +130,7 @@ sub add {
 # Update a record
 sub update {
     my ($self, $id, $data) = @_;
-    my $url = sprintf('%s/api/v1/data.lidoxml/%s', $self->store->url, $id);
+    my $url = sprintf('%s/api/v1/data/%s', $self->store->url, $id);
 
     my $lido_data = $self->store->lido->to_xml($data);
     
@@ -169,5 +179,21 @@ sub delete {
 }
 
 sub delete_all {}
+
+##
+# Check whether an item as identified by $id is already in the datahub.
+# @param $id
+# @return 1 (yes) / 0 (no)
+sub in_datahub {
+    my ($self, $id) = @_;
+    my $token = $self->store->access_token;
+    my $url = sprintf('%s/api/v1/data/%s', $self->store->url, $id);
+    my $res = $self->store->client->get($url);
+    if ($res->is_success) {
+        return 1;
+    } else {
+        return 0;
+    }
+}
 
 1;
