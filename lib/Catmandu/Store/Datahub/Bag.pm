@@ -3,7 +3,6 @@ package Catmandu::Store::Datahub::Bag;
 use Moo;
 use Scalar::Util qw(reftype);
 use LWP::UserAgent;
-use Catmandu::Bag::IdGenerator::Datahub;
 use Catmandu::Util qw(is_string require_package);
 use Time::HiRes qw(usleep);
 use Catmandu::Sane;
@@ -12,15 +11,6 @@ use JSON;
 use Data::Dumper qw(Dumper);
 
 with 'Catmandu::Bag';
-
-has data_pid => (
-    is => 'ro'
-);
-
-sub _build_id_generator {
-    my ($self) = shift;
-    my $data_pid = Catmandu::Bag::IdGenerator::Datahub->new(data_pid => $self->data_pid);
-}
 
 ##
 # before add in ::Bag creates a _id tag, which is useful for hashes and NoSQL-dbs, but breaks our
@@ -31,23 +21,13 @@ sub _build_id_generator {
 around add => sub {
     my $orig = shift;
     my ($self, $data) = @_;
-    if (reftype($data) eq reftype({})) {
-        if (exists($data->{$self->store->key_for('id')})) {
-            delete($data->{$self->store->key_for('id')});
-        }
-    }
     return $self->$orig($data);
 };
 
 around update => sub {
     my $orig = shift;
     my ($self, $id, $data) = @_;
-    if (reftype($data) eq reftype({})) {
-        if (exists($data->{$self->store->key_for('id')})) {
-            delete($data->{$self->store->key_for('id')});
-        }
-    }
-    return $self->$orig($id, $data);
+    return $self->$orig($data);
 };
 
 sub generator {
