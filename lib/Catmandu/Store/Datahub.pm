@@ -21,7 +21,11 @@ has password      => (is => 'ro', required => 1);
 
 has lido     => (is => 'lazy');
 has client   => (is => 'lazy');
-has access_token => (is => 'lazy');
+has access_token => (
+    is      => 'lazy',
+    writer  => '_set_access_token',
+    builder => '_build_access_token'
+);
 
 ##
 # TODO: error reporting 'n stuff
@@ -37,6 +41,17 @@ sub _build_client {
 }
 
 sub _build_access_token {
+    my $self = shift;
+    return $self->generate_token();
+}
+
+sub set_access_token {
+    my $self = shift;
+    # Used to regenerate the token when it becomes invalid
+    return $self->_set_access_token($self->generate_token());
+}
+
+sub generate_token {
     my $self = shift;
     my $oauth = Catmandu::Store::Datahub::OAuth->new(username => $self->username, password => $self->password, client_id => $self->client_id, client_secret => $self->client_secret, url => $self->url);
     return $oauth->token();

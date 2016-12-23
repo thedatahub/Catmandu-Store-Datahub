@@ -8,8 +8,6 @@ use Time::HiRes qw(usleep);
 use Catmandu::Sane;
 use JSON;
 
-use Data::Dumper qw(Dumper);
-
 with 'Catmandu::Bag';
 
 ##
@@ -41,10 +39,15 @@ sub get {
     my ($self, $id) = @_;
     my $url = sprintf('%s/api/v1/data/%s', $self->store->url, $id);
     
-    my $token = $self->store->access_token;
-    my $response = $self->store->client->get($url, Authorization => sprintf('Bearer %s', $token));
+    my $response = $self->store->client->get($url, Authorization => sprintf('Bearer %s', $self->store->access_token));
     if ($response->is_success) {
         return decode_json($response->decoded_content);
+    } elsif ($response->code == 401) {
+        my $error = decode_json($response->decoded_content);
+        if ($error->{'error_description'} eq 'The access token provided has expired.') {
+            $self->store->set_access_token();
+            return $self->get($id);
+        }
     } else {
         Catmandu::HTTPError->throw({
                 code             => $response->code,
@@ -81,6 +84,12 @@ sub add {
     }
     if ($response->is_success) {
         return $response->decoded_content;
+    } elsif ($response->code == 401) {
+        my $error = decode_json($response->decoded_content);
+        if ($error->{'error_description'} eq 'The access token provided has expired.') {
+            $self->store->set_access_token();
+            return $self->add($data);
+        }
     } else {
         Catmandu::HTTPError->throw({
                 code             => $response->code,
@@ -108,6 +117,12 @@ sub update {
     my $response = $self->store->client->put($url, Content_Type => 'application/lido+xml', Authorization => sprintf('Bearer %s', $token), Content => $lido_data);
     if ($response->is_success) {
         return $response->decoded_content;
+    } elsif ($response->code == 401) {
+        my $error = decode_json($response->decoded_content);
+        if ($error->{'error_description'} eq 'The access token provided has expired.') {
+            $self->store->set_access_token();
+            return $self->update($id, $data);
+        }
     } else {
         Catmandu::HTTPError->throw({
                 code             => $response->code,
@@ -133,6 +148,12 @@ sub delete {
     my $response = $self->store->client->delete($url, Authorization => sprintf('Bearer %s', $token));
     if ($response->is_success) {
         return $response->decoded_content;
+    } elsif ($response->code == 401) {
+        my $error = decode_json($response->decoded_content);
+        if ($error->{'error_description'} eq 'The access token provided has expired.') {
+            $self->store->set_access_token();
+            return $self->delete($id);
+        }
     } else {
         Catmandu::HTTPError->throw({
                 code             => $response->code,
