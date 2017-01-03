@@ -1,4 +1,5 @@
 # NAME
+[![Build Status](https://travis-ci.org/thedatahub/Catmandu-Store-Datahub.svg?branch=master)](https://travis-ci.org/thedatahub/Catmandu-Store-Datahub)
 
 Catmandu::Store::Datahub - Store/retrieve items from the Datahub
 
