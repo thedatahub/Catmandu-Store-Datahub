@@ -13,3 +13,4 @@ Catmandu-Store-*
 local
 .perl-version
 cpanfile.snapshot
+Catmandu-Exporter-*
