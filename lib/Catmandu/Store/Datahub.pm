@@ -86,15 +86,25 @@ To configure the store, the location of the Datahub is required. As OAuth2 is us
 
 =over
 
-=item C<url>: base url of the Datahub (e.g. I<http://www.datahub.be>).
+=item C<url>
 
-=item C<client_id>: OAuth2 client ID.
+base url of the Datahub (e.g. I<http://www.datahub.be>).
 
-=item C<client_secret>: OAuth2 client secret.
+=item C<client_id>
 
-=item C<username>: Datahub username.
+OAuth2 client ID.
 
-=item C<password>: Datahub password.
+=item C<client_secret>
+
+OAuth2 client secret.
+
+=item C<username>
+
+Datahub username.
+
+=item C<password>
+
+Datahub password.
 
 =back
 
