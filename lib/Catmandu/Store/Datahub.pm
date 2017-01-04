@@ -122,7 +122,7 @@ Matthias Vandermaesen, C<< matthias.vandermaesen at vlaamsekunstcollectie.be >>
 
 =head1 COPYRIGHT AND LICENSE
 
-The Perl software is copyright (c) 2016 by PACKED vzw and VKC vzw.
+This package is copyright (c) 2016 by PACKED vzw and VKC vzw.
 
 This is free software; you can redistribute it and/or modify it under the same terms as the Perl 5 programming language system itself.
 
