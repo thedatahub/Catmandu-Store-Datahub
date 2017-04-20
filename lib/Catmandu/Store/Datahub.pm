@@ -19,8 +19,8 @@ has client_secret => (is => 'ro', required => 1);
 has username      => (is => 'ro', required => 1);
 has password      => (is => 'ro', required => 1);
 
-has lido     => (is => 'lazy');
-has client   => (is => 'lazy');
+has lido         => (is => 'lazy');
+has client       => (is => 'lazy');
 has access_token => (
     is      => 'lazy',
     writer  => '_set_access_token',

@@ -6,9 +6,24 @@ use LWP::UserAgent;
 use Catmandu::Util qw(is_string require_package);
 use Time::HiRes qw(usleep);
 use Catmandu::Sane;
+use Catmandu::Store::Datahub::API;
 use JSON;
 
 with 'Catmandu::Bag';
+
+has api => (is => 'lazy');
+
+sub _build_api {
+    my $self = shift;
+    my $api = Catmandu::Store::Datahub::API->new(
+        url           => $self->store->url,
+        client_id     => $self->store->client_id,
+        client_secret => $self->store->client_secret,
+        username      => $self->store->username,
+        password      => $self->store->password
+    );
+    return $api;
+}
 
 ##
 # before add in ::Bag creates a _id tag, which is useful for hashes and NoSQL-dbs, but breaks our
@@ -19,17 +34,36 @@ with 'Catmandu::Bag';
 around add => sub {
     my $orig = shift;
     my ($self, $data) = @_;
+    delete $data->{'_id'};
     return $self->$orig($data);
 };
 
 around update => sub {
     my $orig = shift;
     my ($self, $id, $data) = @_;
+    delete $data->{'_id'};
     return $self->$orig($data);
 };
 
+
 sub generator {
     my $self = shift;
+    # api/v1/data -> results ; not paginated
+    my $stack = $self->api->list()->{'results'};
+    return sub {
+        return pop @{$stack};
+    };
+}
+
+sub each {
+    my ($self, $sub) = @_;
+    my $n = 0;
+    my $stack = $self->api->list()->{'results'};
+    while (my $item = pop @{$stack}) {
+        $sub->($item);
+        $n++;
+    }
+    return $n;
 }
 
 
@@ -37,30 +71,7 @@ sub generator {
 # Return a record identified by $id
 sub get {
     my ($self, $id) = @_;
-    my $url = sprintf('%s/api/v1/data/%s', $self->store->url, $id);
-    
-    my $response = $self->store->client->get($url, Authorization => sprintf('Bearer %s', $self->store->access_token));
-    if ($response->is_success) {
-        return decode_json($response->decoded_content);
-    } elsif ($response->code == 401) {
-        my $error = decode_json($response->decoded_content);
-        if ($error->{'error_description'} eq 'The access token provided has expired.') {
-            $self->store->set_access_token();
-            return $self->get($id);
-        }
-    } else {
-        Catmandu::HTTPError->throw({
-                code             => $response->code,
-                message          => $response->status_line,
-                url              => $response->request->uri,
-                method           => $response->request->method,
-                request_headers  => [],
-                request_body     => $response->request->decoded_content,
-                response_headers => [],
-                response_body    => $response->decoded_content,
-            });
-        return undef;
-    }
+    return $self->api->get($id);
 }
 
 ##
@@ -68,123 +79,27 @@ sub get {
 sub add {
     my ($self, $data) = @_;
     my $url;
-
     my $lido_data = $self->store->lido->to_xml($data);
-    
-    my $token = $self->store->access_token;
-    my $response;
-
-    if ($self->in_datahub($data->{'lidoRecID'}->[0]->{'_'})) {
-        my $id = $data->{'lidoRecID'}->[0]->{'_'};
-        $url = sprintf('%s/api/v1/data/%s', $self->store->url, $id);
-        $response = $self->store->client->put($url, Content_Type => 'application/lido+xml', Authorization => sprintf('Bearer %s', $token), Content => $lido_data);
-    } else {
-        $url = sprintf('%s/api/v1/data.lidoxml', $self->store->url);
-        $response = $self->store->client->post($url, Content_Type => 'application/lido+xml', Authorization => sprintf('Bearer %s', $token), Content => $lido_data);
-    }
-    if ($response->is_success) {
-        return $response->decoded_content;
-    } elsif ($response->code == 401) {
-        my $error = decode_json($response->decoded_content);
-        if ($error->{'error_description'} eq 'The access token provided has expired.') {
-            $self->store->set_access_token();
-            return $self->add($data);
-        }
-    } else {
-        Catmandu::HTTPError->throw({
-                code             => $response->code,
-                message          => $response->status_line,
-                url              => $response->request->uri,
-                method           => $response->request->method,
-                request_headers  => [],
-                request_body     => $response->request->decoded_content,
-                response_headers => [],
-                response_body    => $response->decoded_content,
-            });
-        return undef;
-    }
+    return $self->api->add($lido_data, $data->{'lidoRecID'}->[0]->{'_'});
 }
 
 ##
 # Update a record
 sub update {
     my ($self, $id, $data) = @_;
-    my $url = sprintf('%s/api/v1/data/%s', $self->store->url, $id);
-
     my $lido_data = $self->store->lido->to_xml($data);
-    
-    my $token = $self->store->access_token;
-    my $response = $self->store->client->put($url, Content_Type => 'application/lido+xml', Authorization => sprintf('Bearer %s', $token), Content => $lido_data);
-    if ($response->is_success) {
-        return $response->decoded_content;
-    } elsif ($response->code == 401) {
-        my $error = decode_json($response->decoded_content);
-        if ($error->{'error_description'} eq 'The access token provided has expired.') {
-            $self->store->set_access_token();
-            return $self->update($id, $data);
-        }
-    } else {
-        Catmandu::HTTPError->throw({
-                code             => $response->code,
-                message          => $response->status_line,
-                url              => $response->request->uri,
-                method           => $response->request->method,
-                request_headers  => [],
-                request_body     => $response->request->decoded_content,
-                response_headers => [],
-                response_body    => $response->decoded_content,
-            });
-        return undef;
-    }
+    return $self->api->update($id, $lido_data);
 }
 
 ##
 # Delete a record
 sub delete {
     my ($self, $id) = @_;
-    my $url = sprintf('%s/api/v1/data/%s', $self->store->url, $id);
-    
-    my $token = $self->store->access_token;
-    my $response = $self->store->client->delete($url, Authorization => sprintf('Bearer %s', $token));
-    if ($response->is_success) {
-        return $response->decoded_content;
-    } elsif ($response->code == 401) {
-        my $error = decode_json($response->decoded_content);
-        if ($error->{'error_description'} eq 'The access token provided has expired.') {
-            $self->store->set_access_token();
-            return $self->delete($id);
-        }
-    } else {
-        Catmandu::HTTPError->throw({
-                code             => $response->code,
-                message          => $response->status_line,
-                url              => $response->request->uri,
-                method           => $response->request->method,
-                request_headers  => [],
-                request_body     => $response->request->decoded_content,
-                response_headers => [],
-                response_body    => $response->decoded_content,
-            });
-        return undef;
-    }
+    return $self->api->delete($id);
 }
 
 sub delete_all {}
 
-##
-# Check whether an item as identified by $id is already in the datahub.
-# @param $id
-# @return 1 (yes) / 0 (no)
-sub in_datahub {
-    my ($self, $id) = @_;
-    my $token = $self->store->access_token;
-    my $url = sprintf('%s/api/v1/data/%s', $self->store->url, $id);
-    my $res = $self->store->client->get($url);
-    if ($res->is_success) {
-        return 1;
-    } else {
-        return 0;
-    }
-}
+
 
 1;
