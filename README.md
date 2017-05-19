@@ -24,11 +24,25 @@ Note that you must convert your data to LIDO in order to use this module. All ot
 
 To configure the store, the location of the Datahub is required. As OAuth2 is used, a client id and secret are also required, as well as a username and a password.
 
-- `url`: base url of the Datahub (e.g. _http://www.datahub.be_).
-- `client_id`: OAuth2 client ID.
-- `client_secret`: OAuth2 client secret.
-- `username`: Datahub username.
-- `password`: Datahub password.
+- `url`
+
+    base url of the Datahub (e.g. _http://www.datahub.be_).
+
+- `client_id`
+
+    OAuth2 client ID.
+
+- `client_secret`
+
+    OAuth2 client secret.
+
+- `username`
+
+    Datahub username.
+
+- `password`
+
+    Datahub password.
 
 # USAGE
 
