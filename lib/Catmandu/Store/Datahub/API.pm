@@ -47,7 +47,7 @@ sub generate_token {
 sub get {
     my ($self, $id) = @_;
     my $url = sprintf('%s/api/v1/data/%s', $self->url, $id);
-    
+
     my $response = $self->client->get($url, Authorization => sprintf('Bearer %s', $self->access_token));
     if ($response->is_success) {
         return decode_json($response->decoded_content);
@@ -82,6 +82,12 @@ sub add {
     my $response;
 
     # TODO: replace with LIDO-agnostic code
+    if (!defined($lido_rec_id) || $lido_rec_id eq '') {
+        Catmandu::BadVal->throw(
+            'message' => sprintf('An identifier needs to be present before a record can be added.')
+        );
+    }
+
     if ($self->in_datahub($lido_rec_id)) {
         $url = sprintf('%s/api/v1/data/%s', $self->url, $lido_rec_id);
         $response = $self->client->put($url, Content_Type => 'application/lido+xml', Authorization => sprintf('Bearer %s', $token), Content => $data);
@@ -143,7 +149,7 @@ sub update {
 sub delete {
     my ($self, $id) = @_;
     my $url = sprintf('%s/api/v1/data/%s', $self->url, $id);
-    
+
     my $token = $self->access_token;
     my $response = $self->client->delete($url, Authorization => sprintf('Bearer %s', $token));
     if ($response->is_success) {
