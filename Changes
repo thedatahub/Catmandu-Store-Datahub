@@ -1,6 +1,8 @@
 Revision history for Catmandu-Store-Datahub
 
 {{$NEXT}}
+
+0.04  2017-05-24 12:44:09 CEST
         - removed: references to lido
         - added: don't push a record to the datahub if it doesn't have an identifier
 
