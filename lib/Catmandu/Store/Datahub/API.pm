@@ -49,6 +49,7 @@ sub get {
     my $url = sprintf('%s/api/v1/data/%s', $self->url, $id);
 
     my $response = $self->client->get($url, Authorization => sprintf('Bearer %s', $self->access_token));
+
     if ($response->is_success) {
         return decode_json($response->decoded_content);
     } elsif ($response->code == 401) {
@@ -76,7 +77,7 @@ sub get {
 
 sub add {
     my ($self, $data, $id) = @_;
-    my $url;
+    my $url = sprintf('%s/api/v1/data.lidoxml', $self->url);
 
     my $token = $self->access_token;
     my $response;
@@ -121,8 +122,12 @@ sub add {
 sub update {
     my ($self, $id, $data) = @_;
     my $url = sprintf('%s/api/v1/data/%s', $self->url, $id);
+
     my $token = $self->access_token;
-    my $response = $self->client->put($url, Content_Type => 'application/lido+xml', Authorization => sprintf('Bearer %s', $token), Content => $data);
+    my $response;
+
+    $response = $self->client->put($url, Content_Type => 'application/lido+xml', Authorization => sprintf('Bearer %s', $token), Content => $data);
+
     if ($response->is_success) {
         return $response->decoded_content;
     } elsif ($response->code == 401) {
@@ -151,7 +156,10 @@ sub delete {
     my $url = sprintf('%s/api/v1/data/%s', $self->url, $id);
 
     my $token = $self->access_token;
-    my $response = $self->client->delete($url, Authorization => sprintf('Bearer %s', $token));
+    my $response;
+
+    $response = $self->client->delete($url, Authorization => sprintf('Bearer %s', $token));
+
     if ($response->is_success) {
         return $response->decoded_content;
     } elsif ($response->code == 401) {

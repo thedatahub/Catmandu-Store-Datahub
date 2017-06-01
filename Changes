@@ -1,6 +1,7 @@
 Revision history for Catmandu-Store-Datahub
 
 {{$NEXT}}
+    - changed: consistent coding in API methods
     - changed: get the proper error message from the HTTP::Response headers
     - fixed: datahub requires Content-Type: application/lido+xml
 
