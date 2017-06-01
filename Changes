@@ -1,17 +1,18 @@
 Revision history for Catmandu-Store-Datahub
 
 {{$NEXT}}
-        - fixed: datahub requires Content-Type: application/lido+xml
+    - changed: get the proper error message from the HTTP::Response headers
+    - fixed: datahub requires Content-Type: application/lido+xml
 
 0.04  2017-05-24 12:44:09 CEST
-        - removed: references to lido
-        - added: don't push a record to the datahub if it doesn't have an identifier
+    - removed: references to lido
+    - added: don't push a record to the datahub if it doesn't have an identifier
 
 0.03  2017-05-19 10:36:27 CEST
-        - API refactoring
+    - API refactoring
 
 0.02  2017-01-04 14:42:29 UTC
-        - Added documentation
+    - Added documentation
 
 0.01  2016-12-08 12:32:11 CET
-        - Initial release
+    - Initial release

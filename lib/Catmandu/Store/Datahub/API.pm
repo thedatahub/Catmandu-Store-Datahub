@@ -62,7 +62,7 @@ sub get {
     } else {
         Catmandu::HTTPError->throw({
                 code             => $response->code,
-                message          => $response->status_line,
+                message          => $response->headers->header('message'),
                 url              => $response->request->uri,
                 method           => $response->request->method,
                 request_headers  => [],
@@ -106,7 +106,7 @@ sub add {
     } else {
         Catmandu::HTTPError->throw({
                 code             => $response->code,
-                message          => $response->status_line,
+                message          => $response->headers->header('message'),
                 url              => $response->request->uri,
                 method           => $response->request->method,
                 request_headers  => [],
@@ -134,7 +134,7 @@ sub update {
     } else {
         Catmandu::HTTPError->throw({
                 code             => $response->code,
-                message          => $response->status_line,
+                message          => $response->headers->header('message'),
                 url              => $response->request->uri,
                 method           => $response->request->method,
                 request_headers  => [],
@@ -163,7 +163,7 @@ sub delete {
     } else {
         Catmandu::HTTPError->throw({
                 code             => $response->code,
-                message          => $response->status_line,
+                message          => $response->headers->header('message'),
                 url              => $response->request->uri,
                 method           => $response->request->method,
                 request_headers  => [],
@@ -187,7 +187,7 @@ sub list {
     } else {
         Catmandu::HTTPError->throw({
                 code             => $response->code,
-                message          => $response->status_line,
+                message          => $response->headers->header('message'),
                 url              => $response->request->uri,
                 method           => $response->request->method,
                 request_headers  => [],
