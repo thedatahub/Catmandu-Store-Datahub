@@ -89,13 +89,8 @@ sub add {
         );
     }
 
-    if ($self->in_datahub($id)) {
-        $url = sprintf('%s/api/v1/data/%s', $self->url, $id);
-        $response = $self->client->put($url, Content_Type => 'application/lido+xml', Authorization => sprintf('Bearer %s', $token), Content => $data);
-    } else {
-        $url = sprintf('%s/api/v1/data.lidoxml', $self->url);
-        $response = $self->client->post($url, Content_Type => 'application/lido+xml', Authorization => sprintf('Bearer %s', $token), Content => $data);
-    }
+    $response = $self->client->post($url, Content_Type => 'application/lido+xml', Authorization => sprintf('Bearer %s', $token), Content => $data);
+
     if ($response->is_success) {
         return $response->decoded_content;
     } elsif ($response->code == 401) {
@@ -207,21 +202,6 @@ sub list {
     }
 }
 
-##
-# Check whether an item as identified by $id is already in the datahub.
-# @param $id
-# @return 1 (yes) / 0 (no)
-sub in_datahub {
-    my ($self, $id) = @_;
-    my $token = $self->access_token;
-    my $url = sprintf('%s/api/v1/data/%s', $self->url, $id);
-    my $res = $self->client->get($url);
-    if ($res->is_success) {
-        return 1;
-    } else {
-        return 0;
-    }
-}
-
 1;
+
 __END__
