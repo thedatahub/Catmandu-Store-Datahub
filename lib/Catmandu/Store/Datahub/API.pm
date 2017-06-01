@@ -76,18 +76,11 @@ sub get {
 }
 
 sub add {
-    my ($self, $data, $id) = @_;
+    my ($self, $data) = @_;
     my $url = sprintf('%s/api/v1/data.lidoxml', $self->url);
 
     my $token = $self->access_token;
     my $response;
-
-    # TODO: replace with LIDO-agnostic code
-    if (!defined($id) || $id eq '') {
-        Catmandu::BadVal->throw(
-            'message' => sprintf('An identifier needs to be present before a record can be added.')
-        );
-    }
 
     $response = $self->client->post($url, Content_Type => 'application/lido+xml', Authorization => sprintf('Bearer %s', $token), Content => $data);
 

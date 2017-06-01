@@ -1,6 +1,7 @@
 Revision history for Catmandu-Store-Datahub
 
 {{$NEXT}}
+    - changed: POST does not need to know the id of the enclosed entity per RFC 2616
     - changed: POST should not check if a resource exists a piori per RFC 2616
     - changed: consistent coding in API methods
     - changed: get the proper error message from the HTTP::Response headers

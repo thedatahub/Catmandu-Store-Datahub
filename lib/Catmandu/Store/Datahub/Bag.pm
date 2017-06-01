@@ -80,7 +80,7 @@ sub add {
     my ($self, $data) = @_;
     my $url;
     my $lido_data = $self->store->lido->to_xml($data);
-    return $self->api->add($lido_data, $data->{'lidoRecID'}->[0]->{'_'});
+    return $self->api->add($lido_data);
 }
 
 ##
