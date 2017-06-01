@@ -1,6 +1,7 @@
 Revision history for Catmandu-Store-Datahub
 
 {{$NEXT}}
+        - fixed: datahub requires Content-Type: application/lido+xml
 
 0.04  2017-05-24 12:44:09 CEST
         - removed: references to lido

@@ -90,10 +90,10 @@ sub add {
 
     if ($self->in_datahub($id)) {
         $url = sprintf('%s/api/v1/data/%s', $self->url, $id);
-        $response = $self->client->put($url, Content_Type => 'application/xml', Authorization => sprintf('Bearer %s', $token), Content => $data);
+        $response = $self->client->put($url, Content_Type => 'application/lido+xml', Authorization => sprintf('Bearer %s', $token), Content => $data);
     } else {
         $url = sprintf('%s/api/v1/data.lidoxml', $self->url);
-        $response = $self->client->post($url, Content_Type => 'application/xml', Authorization => sprintf('Bearer %s', $token), Content => $data);
+        $response = $self->client->post($url, Content_Type => 'application/lido+xml', Authorization => sprintf('Bearer %s', $token), Content => $data);
     }
     if ($response->is_success) {
         return $response->decoded_content;
