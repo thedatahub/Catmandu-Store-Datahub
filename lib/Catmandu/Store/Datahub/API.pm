@@ -24,7 +24,7 @@ has access_token => (
 
 sub _build_client {
     my $self = shift;
-    return LWP::UserAgent->new();
+    return LWP::UserAgent->new(keep_alive => 1);
 }
 
 sub _build_access_token {
