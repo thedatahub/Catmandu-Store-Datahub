@@ -70,7 +70,7 @@ sub get {
 # Create a new record
 sub add {
     my ($self, $data) = @_;
-    return $self->api->add($data->{'_'});
+    return $self->api->update($data->{'id'}, $data->{'_'});
 }
 
 ##
