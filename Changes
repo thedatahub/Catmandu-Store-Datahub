@@ -2,6 +2,9 @@ Revision history for Catmandu-Store-Datahub
 
 {{$NEXT}}
 
+    - Changed: Configured dzil building.
+    - Changed: licensing to GPLv3.
+
 0.06  2017-07-08 13:55:03 CEST
 
     - fixed: missing ID now fails gracefully.
