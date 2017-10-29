@@ -2,6 +2,8 @@ Revision history for Catmandu-Store-Datahub
 
 {{$NEXT}}
 
+    - Fixed: issue with Catmandu::HTTPError getting the wronge response params.
+
 0.07  2017-10-29 15:08:28 CET
 
     - Changed: Configured dzil building.
