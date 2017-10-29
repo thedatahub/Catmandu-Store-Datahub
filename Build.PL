@@ -18,7 +18,7 @@ my %module_build_args = (
     "Matthias Vandermaesen <matthias.vandermaesen\@vlaamsekunstcollectie.be>"
   ],
   "dist_name" => "Catmandu-Store-Datahub",
-  "dist_version" => "0.06",
+  "dist_version" => "0.07",
   "license" => "gpl",
   "module_name" => "Catmandu::Store::Datahub",
   "recursive_test_files" => 1,

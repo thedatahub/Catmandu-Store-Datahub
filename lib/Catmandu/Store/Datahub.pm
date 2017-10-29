@@ -1,6 +1,6 @@
 package Catmandu::Store::Datahub;
 
-our $VERSION = '0.06';
+our $VERSION = '0.07';
 
 use Catmandu::Sane;
 
