@@ -69,7 +69,7 @@
          "web" : "https://github.com/thedatahub/Catmandu-Store-Datahub"
       }
    },
-   "version" : "0.07",
+   "version" : "0.08",
    "x_contributors" : [
       "Matthias Vandermaesen <matthias@colada.be>",
       "Pieter De Praetere <pieter.de.praetere@helptux.be>",
