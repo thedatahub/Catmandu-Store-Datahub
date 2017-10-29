@@ -54,18 +54,11 @@ See [the Catmandu documentation](http://librecat.org/Catmandu/#stores) for more 
 
 # AUTHORS
 
-Pieter De Praetere, `pieter at packed.be`
-
-Matthias Vandermaesen, `matthias.vandermaesen at vlaamsekunstcollectie.be`
-
-# CONTRIBUTORS
-
-Pieter De Praetere, `pieter at packed.be`
-
-Matthias Vandermaesen, `matthias.vandermaesen at vlaamsekunstcollectie.be`
+Matthias Vandermaesen <matthias.vandermaesen@vlaamsekunstcollectie.be>
+Pieter De Praetere <pieter@packed.be>
 
 # COPYRIGHT AND LICENSE
 
-This package is copyright (c) 2016 by PACKED vzw and VKC vzw.
+This software is copyright (c) 2016 by PACKED, vzw, Vlaamse Kunstcollectie, vzw.
 
-This is free software; you can redistribute it and/or modify it under the same terms as the Perl 5 programming language system itself.
+This is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License, Version 3, June 2007.
