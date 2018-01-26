@@ -34,6 +34,9 @@ sub _build_api {
 around add => sub {
     my $orig = shift;
     my ($self, $data) = @_;
+    if ($self->store->raw_parser == 1) {
+      return $self->$orig($data);
+    }
     delete $data->{'_id'};
     return $self->$orig($data);
 };
@@ -70,7 +73,11 @@ sub get {
 # Create a new record
 sub add {
     my ($self, $data) = @_;
-    return $self->api->update($data->{'id'}, $data->{'_'});
+
+    if ($self->store->raw_parser == 1) {
+      return $self->api->add($data->{'_metadata'});
+    }
+    return $self->api->add($data->{'_'});
 }
 
 ##

@@ -16,6 +16,7 @@ has client_id     => (is => 'ro', required => 1);
 has client_secret => (is => 'ro', required => 1);
 has username      => (is => 'ro', required => 1);
 has password      => (is => 'ro', required => 1);
+has raw_parser    => (is => 'ro', default => sub { return 0; });
 
 has client       => (is => 'lazy');
 has access_token => (
@@ -96,6 +97,10 @@ Datahub username.
 =item C<password>
 
 Datahub password.
+
+=item C<raw_parser>
+
+If the input was parsed by the raw XML parser (Catmandu::Importer::OAI::Parser::raw), set this to 1 to pass the XML directly to the exporter.
 
 =back
 
