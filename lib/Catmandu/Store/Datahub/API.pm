@@ -6,6 +6,7 @@ use warnings;
 use Catmandu;
 use Moo;
 use JSON;
+use Encode qw(encode_utf8);
 
 use LWP::UserAgent;
 
@@ -90,7 +91,8 @@ sub add {
     my $token = $self->access_token;
     my $response;
 
-    $response = $self->client->post($url, Content_Type => 'application/lido+xml', Authorization => sprintf('Bearer %s', $token), Content => $data);
+    my $enc_data = encode_utf8($data);
+    $response = $self->client->post($url, Content_Type => 'application/lido+xml', Authorization => sprintf('Bearer %s', $token), Content => $enc_data);
 
     if ($response->is_success) {
         return $response->decoded_content;
